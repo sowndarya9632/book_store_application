@@ -27,7 +27,7 @@ public class UserController {
         this.userServiceimpl = userServiceimpl;
     }
 
-    @PostMapping("/register")
+    @PostMapping("/registeruser")
     public ResponseEntity<UserResponseDto> registerUser(@Valid @RequestBody UserRequestDto userRequestDto) {
         UserResponseDto user = userServiceimpl.registerUser(userRequestDto);
         return ResponseEntity.ok(user);
