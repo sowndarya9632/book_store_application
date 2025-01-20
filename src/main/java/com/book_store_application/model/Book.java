@@ -3,6 +3,7 @@ package com.book_store_application.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.Arrays;
 @AllArgsConstructor
@@ -16,10 +17,13 @@ public class Book {
     private String bookName;
     private String authorName;
     private String description;
-    @Lob
-    private byte[] logo;
     private double price;
     private Long quantity;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "image_id", referencedColumnName = "imageId")
+    @JsonManagedReference
+    private Image images;
 
     public Integer getId() {
         return id;
@@ -53,12 +57,12 @@ public class Book {
         this.description = description;
     }
 
-    public byte[] getLogo() {
-        return logo;
+    public Image getImages() {
+        return images;
     }
 
-    public void setLogo(byte[] logo) {
-        this.logo = logo;
+    public void setImages(Image images) {
+        this.images = images;
     }
 
     public double getPrice() {
@@ -84,7 +88,6 @@ public class Book {
                 ", bookName='" + bookName + '\'' +
                 ", authorName='" + authorName + '\'' +
                 ", description='" + description + '\'' +
-                ", logo=" + Arrays.toString(logo) +
                 ", price=" + price +
                 ", quantity=" + quantity +
                 '}';

@@ -9,8 +9,8 @@ import com.book_store_application.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,24 +23,24 @@ public class BookServiceImpl implements BookService {
     private BookRepository bookRepository;
 
     @Override
-    public BookResponseDto addBook(BookRequestDto bookRequestDto) {
+    public BookResponseDto addBook(MultipartFile bookImage,BookRequestDto bookRequestDto) {
         Boolean isPresent = bookRepository.existsByBookNameIgnoreCase(bookRequestDto.getBookName());
         if (isPresent) {
             throw new IllegalArgumentException("Book already exists");
         }
-        byte[] logoBytes = null;
+        /*byte[] logoBytes = null;
         if (bookRequestDto.getLogo() != null) {
             try {
                 logoBytes = bookRequestDto.getLogo().getBytes();
             } catch (IOException e) {
                 throw new IllegalArgumentException("Failed to process the logo file", e);
             }
-        }
+        }*/
         Book book =new Book();
         book.setId(book.getId());
         book.setBookName(bookRequestDto.getBookName());
         book.setAuthorName(bookRequestDto.getAuthorName());
-        book.setLogo(logoBytes);
+        book.setImages(bookRequestDto.getImage());
         book.setPrice(bookRequestDto.getPrice());
         book.setDescription(bookRequestDto.getDescription());
         book.setQuantity(bookRequestDto.getQuantity());
@@ -52,10 +52,9 @@ public class BookServiceImpl implements BookService {
         Optional<Book> existingBook = bookRepository.findById(id);
         if (existingBook.isPresent()) {
             Book book = existingBook.get();
-            // Update book details
-           byte[] logoBytes = bookRequestDto.getLogo().getBytes();
+           //byte[] logoBytes = bookRequestDto.getLogo().getBytes();
 
-            book.setLogo(logoBytes);
+            book.setImages(bookRequestDto.getImage());
             book.setAuthorName(bookRequestDto.getAuthorName());
             book.setBookName(bookRequestDto.getBookName());
             book.setDescription(bookRequestDto.getDescription());
@@ -71,7 +70,7 @@ public class BookServiceImpl implements BookService {
     public List<BookResponseDto> getAllBooks() {
         List<Book> books=bookRepository.findAll();
         return books.stream()
-                .map(book -> new BookResponseDto(book.getId(), book.getBookName(), book.getAuthorName(), book.getDescription(),book.getLogo(),book.getPrice(),book.getQuantity()))
+                .map(book -> new BookResponseDto(book.getId(), book.getBookName(), book.getAuthorName(), book.getDescription(),book.getImages(),book.getPrice(),book.getQuantity()))
                 .collect(Collectors.toList());
     }
 
@@ -108,6 +107,8 @@ public class BookServiceImpl implements BookService {
         throw new ResourceNotFoundException("book id not found");
     }
 
+
+
     private BookResponseDto mapToDto(Book book) {
         BookResponseDto bookResponseDto=new BookResponseDto();
         bookResponseDto.setId(book.getId());
@@ -116,7 +117,7 @@ public class BookServiceImpl implements BookService {
         bookResponseDto.setDescription(book.getDescription());
         bookResponseDto.setPrice(book.getPrice());
         bookResponseDto.setQuantity(book.getQuantity());
-        bookResponseDto.setLogo(book.getLogo());
+        bookResponseDto.setImage(book.getImages());
         return bookResponseDto;
     }
     @Override
@@ -125,6 +126,22 @@ public class BookServiceImpl implements BookService {
         return books.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+    }
+    @Override
+    public BookResponseDto addBook(BookRequestDto bookRequestDto) {
+        Boolean isPresent = bookRepository.existsByBookNameIgnoreCase(bookRequestDto.getBookName());
+        if (isPresent) {
+            throw new IllegalArgumentException("Book already exists");
+        }
+        Book book =new Book();
+        book.setId(book.getId());
+        book.setBookName(bookRequestDto.getBookName());
+        book.setAuthorName(bookRequestDto.getAuthorName());
+        book.setImages(bookRequestDto.getImage());
+        book.setPrice(bookRequestDto.getPrice());
+        book.setDescription(bookRequestDto.getDescription());
+        book.setQuantity(bookRequestDto.getQuantity());
+        return mapToDto( bookRepository.save(book));
     }
 
 

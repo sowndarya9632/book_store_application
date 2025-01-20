@@ -1,5 +1,6 @@
 package com.book_store_application.responsedto;
 
+import com.book_store_application.model.Image;
 import jakarta.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -11,18 +12,17 @@ public class BookResponseDto {
     private String bookName;
     private String authorName;
     private String description;
-    @Lob
-    private byte[] logo;
+    private Image image;
     private double price;
     private Long quantity;
 
 
-    public BookResponseDto(Integer id, String bookName, String authorName, double price, String description, Long quantity, byte[] logo) {
+    public BookResponseDto(Integer id, String bookName, String authorName, double price, String description, Long quantity, Image image) {
         this.id = id;
         this.bookName = bookName;
         this.authorName = authorName;
         this.description = description;
-        this.logo = logo;
+        this.image = image;
         this.price = price;
         this.quantity = quantity;
     }
@@ -59,12 +59,12 @@ public class BookResponseDto {
         this.description = description;
     }
 
-    public byte[] getLogo() {
-        return logo;
+    public Image getImage() {
+        return image;
     }
 
-    public void setLogo(byte[] logo) {
-        this.logo = logo;
+    public void setImage(Image image) {
+        this.image = image;
     }
 
     public double getPrice() {

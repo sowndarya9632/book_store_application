@@ -1,15 +1,19 @@
 package com.book_store_application.controller;
 
 import com.book_store_application.model.Book;
+import com.book_store_application.model.Image;
 import com.book_store_application.requestdto.BookRequestDto;
 import com.book_store_application.responsedto.BookResponseDto;
 import com.book_store_application.serviceImpl.BookServiceImpl;
 import com.book_store_application.filter.JwtService;
+import com.book_store_application.serviceImpl.ImageService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -28,15 +32,28 @@ public class BookApiController {
     @Autowired
     private BookServiceImpl bookServiceimpl;
 
+    @Autowired
+  private ImageService imageService;
+
     @GetMapping
     public String message() {
         return "Hello";
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/addbook")
-    public ResponseEntity<BookResponseDto> addBook( @ModelAttribute @Valid BookRequestDto bookRequestDto){
-       BookResponseDto books= bookServiceimpl.addBook(bookRequestDto);
+    @PostMapping(value = "/addbook",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<BookResponseDto> addBook( @RequestPart("bookImage") MultipartFile bookImage,
+                                                    @RequestPart("bookRequest") String bookRequestJson) throws IOException {
+        // Convert JSON string to BookRequest object
+        ObjectMapper objectMapper = new ObjectMapper();
+        BookRequestDto bookRequest = objectMapper.readValue(bookRequestJson, BookRequestDto.class);
+
+        // Save the image (business logic handled by a service)
+        Image savedImage = imageService.addImage(bookImage);
+       bookRequest.setImage(savedImage);
+
+        // Save the book
+       BookResponseDto books= bookServiceimpl.addBook(bookRequest);
         if(books!=null) {
             return ResponseEntity.ok(books);
         }
@@ -85,7 +102,7 @@ public class BookApiController {
                         book.getPrice(),
                         book.getDescription(),
                         book.getQuantity(),
-                        book.getLogo())
+                        book.getImage())
 
                 )
                 .collect(Collectors.toList());

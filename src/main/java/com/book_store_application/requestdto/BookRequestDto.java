@@ -1,5 +1,6 @@
 package com.book_store_application.requestdto;
 
+import com.book_store_application.model.Image;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,7 @@ public class BookRequestDto {
     private String bookName;
     private String authorName;
     private String description;
-    private MultipartFile logo;  // Change to MultipartFile
+    private Image image;
     private double price;
     @NotNull(message = "Quantity cannot be blank")
     private Long quantity;
@@ -44,12 +45,12 @@ public class BookRequestDto {
         this.description = description;
     }
 
-    public MultipartFile getLogo() {
-        return logo;
+    public Image getImage() {
+        return image;
     }
 
-    public void setLogo(MultipartFile logo) {
-        this.logo = logo;
+    public void setImage(Image image) {
+        this.image = image;
     }
 
     public double getPrice() {
