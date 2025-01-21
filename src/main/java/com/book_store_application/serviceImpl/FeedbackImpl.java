@@ -16,15 +16,26 @@ import java.util.List;
 
 @Service
 public class FeedbackImpl implements FeedbackService {
-    @Autowired
+
     private FeedbackRepository feedbackRepository;
 
-    @Autowired
+    public FeedbackImpl(FeedbackRepository feedbackRepository) {
+        this.feedbackRepository = feedbackRepository;
+    }
+
     private UserRepository userRepository;
 
-    @Autowired
+    public FeedbackImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     private BookRepository bookRepository;
-@Override
+
+    public FeedbackImpl(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+
+    @Override
     public void submitFeedback(Long userId, Integer bookId, int rating, String review) {
         User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("user not found"));
         Book book= bookRepository.findById(bookId).orElseThrow(()->new RuntimeException("book not found"));

@@ -19,15 +19,30 @@ import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService {
-    @Autowired
     private OrderRepository orderRepository;
-    @Autowired
+
+    public OrderServiceImpl(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+
     private UserRepository userRepository;
-    @Autowired
+
+    public OrderServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     private BookRepository bookRepository;
-    @Autowired
+
+    public OrderServiceImpl(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+
     private CartRepository cartRepository;
-    @Override
+
+    public OrderServiceImpl(CartRepository cartRepository) {
+        this.cartRepository = cartRepository;
+    }
+
     public OrderResponseDto placeOrderForAllItems(OrderRequestDto orderRequestDto) {
         User user = userRepository.findById(orderRequestDto.getUserId()).orElseThrow(() -> new RuntimeException("user not found"));
         List<Cart> cart = cartRepository.findByUser(user);

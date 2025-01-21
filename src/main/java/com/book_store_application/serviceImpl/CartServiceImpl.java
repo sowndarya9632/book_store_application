@@ -19,19 +19,30 @@ import java.util.Optional;
 @Service
 public class CartServiceImpl implements CartService {
 
-    @Autowired
     private CartRepository cartRepository;
 
-    @Autowired
+    public CartServiceImpl(CartRepository cartRepository) {
+        this.cartRepository = cartRepository;
+    }
+
     private BookRepository bookRepository;
 
-    @Autowired
+    public CartServiceImpl(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
+
     private JwtService jwtService;
 
-    @Autowired
+    public CartServiceImpl(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
+
     private UserRepository userRepository;
 
-    // Add to Cart
+    public CartServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     public Cart addToCart(long userId , Integer id) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));

@@ -1,7 +1,6 @@
 package com.book_store_application.responsedto;
 
 import com.book_store_application.model.User;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthenticationResponse {
 
-    private String token;  // Add token field
+    private String token;
     private String message;
     private User user;
 

@@ -1,31 +1,33 @@
 package com.book_store_application.controller;
 
 import com.book_store_application.model.Cart;
+import com.book_store_application.responsedto.BookResponseDto;
 import com.book_store_application.serviceImpl.CartServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
 @RestController
-@RequestMapping("/api/cart")
+@RequestMapping("/api/v1/cart")
 public class CartController {
 
     @Autowired
     private CartServiceImpl cartServiceimpl;
 
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/add/{userId}/{bookId}")
-    public ResponseEntity<Cart> addToCart(@RequestAttribute("role") String role,@PathVariable long userId, @PathVariable Integer bookId) {
-        if(role==null) {
-            throw new IllegalArgumentException("Users and admin not found");
-        }
-        if(role.equalsIgnoreCase("ADMIN")) {
-            return new ResponseEntity<>(cartServiceimpl.addToCart(userId, bookId), HttpStatus.CREATED);
+    public ResponseEntity<Cart> addToCart(@PathVariable long userId, @PathVariable Integer bookId) {
+        Cart cart= cartServiceimpl.addToCart(userId, bookId);
+        if(cart!=null) {
+            return ResponseEntity.ok(cart);
         }
         else {
-            throw new IllegalArgumentException("Users cannot add book,only admin can add");
+            throw new IllegalArgumentException("Users cannot add cart,only admin can add");
         }
 
     }

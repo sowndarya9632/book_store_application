@@ -4,7 +4,6 @@ public class ResetRequestDto {
     private String oldPassword;
     private String newPassword;
 
-    // Getters and Setters
     public String getOldPassword() {
         return oldPassword;
     }

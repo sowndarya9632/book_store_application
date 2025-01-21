@@ -1,14 +1,7 @@
 package com.book_store_application.responsedto;
 
 import com.book_store_application.model.Role;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
-
-
-
 public class UserResponseDto {
     private long id;
     private String firstName;

@@ -56,7 +56,6 @@ public class UserController {
         }
     }
 
-    // Update User
     @PutMapping("/update")
     public ResponseEntity<UserResponseDto> updateUser(@RequestParam String email,
                                                       @Valid @RequestBody UserRequestDto userRequestDto) {
@@ -68,7 +67,6 @@ public class UserController {
         }
     }
 
-    // Delete User
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteUser(@RequestParam String emailID) {
         try {
@@ -79,7 +77,6 @@ public class UserController {
         }
     }
 
-    // Reset Password
     @PutMapping("/reset-password")
     public ResponseEntity<UserResponseDto> resetPassword(@RequestParam String emailId,
                                                          @Valid @RequestBody ResetRequestDto resetRequestDto) {
@@ -93,7 +90,6 @@ public class UserController {
         }
     }
 
-    // Forget Password
     @PostMapping("/forget-password")
     public ResponseEntity<UserResponseDto> forgetPassword(@Valid @RequestBody UserRequestDto requestDTO) {
         try {

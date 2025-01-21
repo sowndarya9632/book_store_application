@@ -19,8 +19,11 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:3000") // Allow React app to access
 @Service
 public class BookServiceImpl implements BookService {
-    @Autowired
     private BookRepository bookRepository;
+
+    public BookServiceImpl(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
 
     @Override
     public BookResponseDto addBook(MultipartFile bookImage,BookRequestDto bookRequestDto) {
@@ -28,14 +31,6 @@ public class BookServiceImpl implements BookService {
         if (isPresent) {
             throw new IllegalArgumentException("Book already exists");
         }
-        /*byte[] logoBytes = null;
-        if (bookRequestDto.getLogo() != null) {
-            try {
-                logoBytes = bookRequestDto.getLogo().getBytes();
-            } catch (IOException e) {
-                throw new IllegalArgumentException("Failed to process the logo file", e);
-            }
-        }*/
         Book book =new Book();
         book.setId(book.getId());
         book.setBookName(bookRequestDto.getBookName());
@@ -52,8 +47,6 @@ public class BookServiceImpl implements BookService {
         Optional<Book> existingBook = bookRepository.findById(id);
         if (existingBook.isPresent()) {
             Book book = existingBook.get();
-           //byte[] logoBytes = bookRequestDto.getLogo().getBytes();
-
             book.setImages(bookRequestDto.getImage());
             book.setAuthorName(bookRequestDto.getAuthorName());
             book.setBookName(bookRequestDto.getBookName());

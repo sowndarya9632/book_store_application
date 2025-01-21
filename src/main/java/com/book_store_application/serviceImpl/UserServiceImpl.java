@@ -22,16 +22,35 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
-    @Autowired
     private UserRepository userRepository;
-    @Autowired
+
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     private JwtService jwtService;
-    @Autowired
+
+    public UserServiceImpl(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
+
     private EmailService emailService;
-    @Autowired
+
+    public UserServiceImpl(EmailService emailService) {
+        this.emailService = emailService;
+    }
+
     private  AuthenticationManager authenticationManager;
-    @Autowired
+
+    public UserServiceImpl(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
+
     private PasswordEncoder passwordEncoder;
+
+    public UserServiceImpl(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public AuthenticationResponse registerUser(UserRequestDto userRequestDto) {
@@ -53,7 +72,6 @@ public class UserServiceImpl implements UserService {
         }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        // Authenticate the user
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmailId(),
@@ -61,34 +79,15 @@ public class UserServiceImpl implements UserService {
                 )
         );
 
-        // Retrieve the user from the database
         var user = userRepository.findByEmailId(request.getEmailId())
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid email or password"));
-
-        // Generate the JWT token
         var jwtToken = jwtService.generateToken(user);
-
-        // Return the response with the token, message, and user
         return AuthenticationResponse.builder()
-                .token(jwtToken) // Set the token here
-                .message("Login successful") // Keep the message concise
-                .user(user) // Include the user in the response
+                .token(jwtToken)
+                .message("Login successful")
+                .user(user)
                 .build();
     }
-
-
-
-    public Optional<User> userLogin(UserRequestDto userRequestDto) {
-        Optional<User> userLogin = userRepository.findByfirstNameAndPassword(userRequestDto.getFirstName(), userRequestDto.getPassword());
-
-        if (userLogin.isPresent()) {
-
-            return userLogin;
-        } else {
-            return null;
-        }
-    }
-
     private UserResponseDto mapTODto(User user) {
         UserResponseDto responseDto = new UserResponseDto();
         responseDto.setId(user.getId());
@@ -100,7 +99,6 @@ public class UserServiceImpl implements UserService {
         responseDto.setPassword(user.getPassword());
         responseDto.setRegisteredDate(user.getRegisteredDate());
         responseDto.setUpdatedDate(user.getUpdatedDate());
-        //responseDto.setToken(token);
         return responseDto;
 
     }

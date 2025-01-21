@@ -4,8 +4,7 @@ package com.book_store_application.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
+
 
 @Entity
 @Table(name = "orders")
@@ -21,7 +20,6 @@ public class Order {
     private String address;
 
     @ManyToOne
-    //@JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne

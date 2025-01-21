@@ -11,8 +11,12 @@ import java.io.IOException;
 @Service
 public class ImageService {
 
-    @Autowired
-    ImageRepository imageRepository;
+     private ImageRepository imageRepository;
+
+    public ImageService(ImageRepository imageRepository) {
+        this.imageRepository = imageRepository;
+    }
+
     public Image addImage(MultipartFile image) throws  IOException {
         Image imageData = new Image();
         imageData.setImageName(image.getOriginalFilename());

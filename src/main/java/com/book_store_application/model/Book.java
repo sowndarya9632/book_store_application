@@ -4,8 +4,6 @@ package com.book_store_application.model;
 import jakarta.persistence.*;
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import java.util.Arrays;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

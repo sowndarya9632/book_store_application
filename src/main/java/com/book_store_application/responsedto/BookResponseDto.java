@@ -1,7 +1,6 @@
 package com.book_store_application.responsedto;
 
 import com.book_store_application.model.Image;
-import jakarta.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 

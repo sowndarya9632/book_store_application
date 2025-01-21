@@ -18,14 +18,23 @@ import java.util.stream.Collectors;
 @Service
 public class WishlistServiceImpl implements WishlistService {
 
-    @Autowired
     private WishlistRepository wishlistRepository;
 
-    @Autowired
+    public WishlistServiceImpl(WishlistRepository wishlistRepository) {
+        this.wishlistRepository = wishlistRepository;
+    }
+
     private UserRepository userRepository;
 
-    @Autowired
+    public WishlistServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     private BookRepository bookRepository;
+
+    public WishlistServiceImpl(BookRepository bookRepository) {
+        this.bookRepository = bookRepository;
+    }
 
     @Override
     public void addBookToWishlist(WishlistRequestDto requestDto) {

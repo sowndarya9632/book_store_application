@@ -10,7 +10,6 @@ public class EmailService {
 
     @Autowired
     private JavaMailSender javaMailSender;
-
     public void sendPasswordResetEmail(String recipientEmail, String tempPassword) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo("sowndarya9632@gmail.com");

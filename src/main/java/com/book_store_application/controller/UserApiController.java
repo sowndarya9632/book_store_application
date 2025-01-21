@@ -71,7 +71,7 @@ public class UserApiController {
             if(getUser!=null){
             return ResponseEntity.ok(getUser);
         } else {
-            return ResponseEntity.status(403).body(null); // Forbidden
+            return ResponseEntity.status(403).body(null);
         }
     }
 }
