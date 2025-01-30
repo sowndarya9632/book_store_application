@@ -19,19 +19,13 @@ public class FeedbackImpl implements FeedbackService {
 
     private FeedbackRepository feedbackRepository;
 
-    public FeedbackImpl(FeedbackRepository feedbackRepository) {
-        this.feedbackRepository = feedbackRepository;
-    }
-
     private UserRepository userRepository;
-
-    public FeedbackImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     private BookRepository bookRepository;
 
-    public FeedbackImpl(BookRepository bookRepository) {
+    public FeedbackImpl(FeedbackRepository feedbackRepository, UserRepository userRepository, BookRepository bookRepository) {
+        this.feedbackRepository = feedbackRepository;
+        this.userRepository = userRepository;
         this.bookRepository = bookRepository;
     }
 

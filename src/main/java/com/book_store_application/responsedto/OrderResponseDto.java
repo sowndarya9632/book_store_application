@@ -1,5 +1,6 @@
 package com.book_store_application.responsedto;
 
+import com.book_store_application.model.Address;
 import com.book_store_application.model.Book;
 import com.book_store_application.model.User;
 
@@ -11,7 +12,7 @@ public class OrderResponseDto {
     private LocalDate orderDate;
     private double price;
     private int quantity;
-    private String address;
+    private Address address;
     private User user;
     private Book book;
 
@@ -47,11 +48,11 @@ public class OrderResponseDto {
         this.quantity = quantity;
     }
 
-    public String getAddress() {
+    public Address getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(Address address) {
         this.address = address;
     }
 

@@ -22,7 +22,11 @@ public class SecurityConfiguration {
             "/api/v1/users/public",
             "/configuration/ui",
             "/configuration/security",
-            "/api/v1/books/**"  // Added the books API endpoint to the whitelist
+            "/api/v1/books/**",
+            "/api/v1/cart/**",
+            "/api/addresses/**",
+            "/api/v1/order/**",
+            "/api/wishlist/**"
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;

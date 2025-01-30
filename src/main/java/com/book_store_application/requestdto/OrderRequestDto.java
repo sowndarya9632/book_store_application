@@ -1,13 +1,14 @@
 package com.book_store_application.requestdto;
 
+import com.book_store_application.model.Address;
+
 import java.util.Date;
 
 public class OrderRequestDto {
-    private Long userId;
+   private Long userId;
     private Integer bookId;
     private int qty;
-    private String address;
-
+    private Address address;
     public Long getUserId() {
         return userId;
     }
@@ -15,6 +16,7 @@ public class OrderRequestDto {
     public void setUserId(Long userId) {
         this.userId = userId;
     }
+
 
     public Integer getBookId() {
         return bookId;
@@ -32,11 +34,11 @@ public class OrderRequestDto {
         this.qty = qty;
     }
 
-    public String getAddress() {
+    public Address getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(Address address) {
         this.address = address;
     }
 }

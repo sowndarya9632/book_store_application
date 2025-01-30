@@ -1,11 +1,11 @@
 package com.book_store_application.requestdto;
 
 import com.book_store_application.model.Image;
+import com.book_store_application.model.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,6 +18,7 @@ public class BookRequestDto {
     private double price;
     @NotNull(message = "Quantity cannot be blank")
     private Long quantity;
+
 
     public String getBookName() {
         return bookName;

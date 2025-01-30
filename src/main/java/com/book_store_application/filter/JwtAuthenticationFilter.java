@@ -3,12 +3,14 @@ package com.book_store_application.filter;
 import com.book_store_application.exception.CustomBadCredentialsException;
 import com.book_store_application.exception.InvalidTokenException;
 import com.book_store_application.filter.JwtService;
+import com.book_store_application.respository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,6 +25,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
@@ -32,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
         if (request.getServletPath().contains("/api/v1/auth")) {
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(request, response);// without authentication
             return;
         }
         final String authHeader = request.getHeader("Authorization");

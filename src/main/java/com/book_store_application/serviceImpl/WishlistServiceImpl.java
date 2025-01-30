@@ -20,19 +20,13 @@ public class WishlistServiceImpl implements WishlistService {
 
     private WishlistRepository wishlistRepository;
 
-    public WishlistServiceImpl(WishlistRepository wishlistRepository) {
-        this.wishlistRepository = wishlistRepository;
-    }
-
     private UserRepository userRepository;
-
-    public WishlistServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     private BookRepository bookRepository;
 
-    public WishlistServiceImpl(BookRepository bookRepository) {
+    public WishlistServiceImpl(WishlistRepository wishlistRepository, UserRepository userRepository, BookRepository bookRepository) {
+        this.wishlistRepository = wishlistRepository;
+        this.userRepository = userRepository;
         this.bookRepository = bookRepository;
     }
 

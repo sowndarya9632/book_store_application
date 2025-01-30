@@ -20,45 +20,34 @@ import java.util.Optional;
 public class CartServiceImpl implements CartService {
 
     private CartRepository cartRepository;
-
-    public CartServiceImpl(CartRepository cartRepository) {
-        this.cartRepository = cartRepository;
-    }
-
     private BookRepository bookRepository;
-
-    public CartServiceImpl(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
-    }
-
     private JwtService jwtService;
-
-    public CartServiceImpl(JwtService jwtService) {
-        this.jwtService = jwtService;
-    }
-
     private UserRepository userRepository;
-
-    public CartServiceImpl(UserRepository userRepository) {
+    @Autowired
+    public CartServiceImpl(CartRepository cartRepository, BookRepository bookRepository,
+                           JwtService jwtService, UserRepository userRepository) {
+        this.cartRepository = cartRepository;
+        this.bookRepository = bookRepository;
+        this.jwtService = jwtService;
         this.userRepository = userRepository;
     }
 
-    public Cart addToCart(long userId , Integer id) {
+    public Cart addToCart(long userId, Integer bookId, int requestQuantity) {
+        // Retrieve the user from the repository
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        Book book = bookRepository.findById(id)
+        Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
 
         Cart existingCart = cartRepository.findByUserAndBook(user, book);
         if (existingCart != null) {
-            existingCart.setQuantity(existingCart.getQuantity() + 1);
-            cartRepository.save(existingCart);
-            return existingCart;
+            existingCart.setQuantity(existingCart.getQuantity() + requestQuantity);
+            return cartRepository.save(existingCart);
         }
-
-        Cart cart = new Cart(user, book,book.getQuantity(), book.getPrice());
-        return cartRepository.save(cart);
+        Cart newCart = new Cart(user, book, requestQuantity, book.getPrice());
+        return cartRepository.save(newCart);
     }
+
 
     public void removeFromCart(long cartId) {
         Optional<Cart> cart = cartRepository.findById(cartId);
@@ -79,17 +68,22 @@ public class CartServiceImpl implements CartService {
     public Cart updateQuantity(long userId, long cartId, long quantity) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        Optional<Cart> cart = cartRepository.findById(cartId);
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
 
-        if (cart.isPresent() && cart.get().getUser().equals(user)) {
-            Cart cartItem = cart.get();
-            cartItem.setQuantity(quantity);
-            cartRepository.save(cartItem);
-            return cartItem;
-        } else {
-            throw new ResourceNotFoundException("Cart not found for this user with id: " + cartId);
+        if (!cart.getUser().equals(user)) {
+            throw new RuntimeException("Cart does not belong to this user");
         }
+
+        Book book = cart.getBook();
+        if (quantity > book.getQuantity()) {
+            throw new RuntimeException("Insufficient stock for book: " + book.getBookName());
+        }
+
+        cart.setQuantity(quantity);
+        return cartRepository.save(cart);
     }
+
     public List<Cart> getAllCartItemsForUser(long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));

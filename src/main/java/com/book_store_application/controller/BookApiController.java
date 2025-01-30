@@ -39,8 +39,7 @@ public class BookApiController {
     public String message() {
         return "Hello";
     }
-
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('USER') ")
     @PostMapping(value = "/addbook",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<BookResponseDto> addBook( @RequestPart("bookImage") MultipartFile bookImage,
                                                     @RequestPart("bookRequest") String bookRequestJson) throws IOException {
@@ -58,7 +57,7 @@ public class BookApiController {
             return ResponseEntity.ok(books);
         }
         else {
-            throw new IllegalArgumentException("Users cannot add book,only admin can add");
+            throw new IllegalArgumentException("cannot add book");
         }
     }
     @PreAuthorize("hasRole('ADMIN')")
@@ -70,7 +69,7 @@ public class BookApiController {
         }
       else
         {
-            throw new IllegalArgumentException("Users cannot update book, Only admin can update book.");
+            throw new IllegalArgumentException("cannot add book");
         }
     }
     @PreAuthorize("hasRole('ADMIN')")
@@ -141,5 +140,16 @@ public class BookApiController {
             throw new IllegalArgumentException("Users cannot change book price");
         }
     }
+  /*  @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @GetMapping("/getAll/{userId}")
+    public ResponseEntity<List<Book>> getBooksByUserId(@PathVariable Long userId) {
+        List<Book> books = bookServiceimpl.getBooksByUserId(userId);
+
+        if (books.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(books);
+    }*/
 
 }

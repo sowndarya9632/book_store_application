@@ -24,31 +24,20 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     private JwtService jwtService;
-
-    public UserServiceImpl(JwtService jwtService) {
-        this.jwtService = jwtService;
-    }
 
     private EmailService emailService;
 
-    public UserServiceImpl(EmailService emailService) {
-        this.emailService = emailService;
-    }
 
     private  AuthenticationManager authenticationManager;
 
-    public UserServiceImpl(AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
-
     private PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, JwtService jwtService, EmailService emailService, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.jwtService = jwtService;
+        this.emailService = emailService;
+        this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -81,13 +70,16 @@ public class UserServiceImpl implements UserService {
 
         var user = userRepository.findByEmailId(request.getEmailId())
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid email or password"));
-        var jwtToken = jwtService.generateToken(user);
+
+        var jwtToken = jwtService.generateToken(user, user.getId());  // Pass the userId to generateToken
+
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .message("Login successful")
                 .user(user)
                 .build();
     }
+
     private UserResponseDto mapTODto(User user) {
         UserResponseDto responseDto = new UserResponseDto();
         responseDto.setId(user.getId());
@@ -170,6 +162,4 @@ public class UserServiceImpl implements UserService {
     private String generateTempPassword() {
         return "Temp1234!";
     }
-
-
 }

@@ -17,13 +17,15 @@ public class Order {
     private LocalDate orderDate;
     private double price;
     private int quantity;
-    private String address;
 
     @ManyToOne
     private User user;
 
     @ManyToOne
     private Book book;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id")
+    private Address address;
 
     private boolean cancel;
 
@@ -59,11 +61,11 @@ public class Order {
         this.quantity = quantity;
     }
 
-    public String getAddress() {
+    public Address getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(Address address) {
         this.address = address;
     }
 

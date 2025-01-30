@@ -7,7 +7,7 @@ import com.book_store_application.responsedto.OrderResponseDto;
 import java.util.List;
 
 public interface OrderService {
-   OrderResponseDto placeOrderForAllItems(OrderRequestDto orderRequestDto);
+   OrderResponseDto placeOrderForAllItems( String token,OrderRequestDto orderRequestDto);
    OrderResponseDto placeOrderForSpecificItem( Long cartId,OrderRequestDto orderRequestDto);
    boolean cancelOrder(Long orderId);
    List<Order> getAllOrders(boolean cancel);

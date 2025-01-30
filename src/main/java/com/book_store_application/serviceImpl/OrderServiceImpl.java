@@ -1,17 +1,14 @@
 package com.book_store_application.serviceImpl;
 
-import com.book_store_application.model.Book;
-import com.book_store_application.model.Cart;
-import com.book_store_application.model.Order;
-import com.book_store_application.model.User;
+import com.book_store_application.filter.JwtService;
+import com.book_store_application.model.*;
 import com.book_store_application.requestdto.OrderRequestDto;
 import com.book_store_application.responsedto.OrderResponseDto;
-import com.book_store_application.respository.BookRepository;
-import com.book_store_application.respository.CartRepository;
-import com.book_store_application.respository.OrderRepository;
-import com.book_store_application.respository.UserRepository;
+import com.book_store_application.respository.*;
 import com.book_store_application.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.transaction.Transactional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,57 +18,78 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
     private OrderRepository orderRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
-    }
-
     private UserRepository userRepository;
-
-    public OrderServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     private BookRepository bookRepository;
 
-    public OrderServiceImpl(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
-    }
-
     private CartRepository cartRepository;
 
-    public OrderServiceImpl(CartRepository cartRepository) {
-        this.cartRepository = cartRepository;
-    }
+    private AddressRepository addressRepository;
 
-    public OrderResponseDto placeOrderForAllItems(OrderRequestDto orderRequestDto) {
-        User user = userRepository.findById(orderRequestDto.getUserId()).orElseThrow(() -> new RuntimeException("user not found"));
+    private final JwtService jwtService;
+
+
+    public OrderServiceImpl(OrderRepository orderRepository, UserRepository userRepository, BookRepository bookRepository, CartRepository cartRepository, AddressRepository addressRepository, JwtService jwtService) {
+        this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
+        this.bookRepository = bookRepository;
+        this.cartRepository = cartRepository;
+        this.addressRepository=addressRepository;
+        this.jwtService = jwtService;
+    }
+    @Transactional
+    public OrderResponseDto placeOrderForAllItems(String token,OrderRequestDto orderRequestDto) {
+        Long userId = getUserIdFromToken(token); // Extract user ID from token
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+       // User user = userRepository.findById(orderRequestDto.getUserId())
+              //  .orElseThrow(() -> new RuntimeException("User not found"));
+
         List<Cart> cart = cartRepository.findByUser(user);
         if (cart.isEmpty()) {
-            throw new RuntimeException("cart is empty");
+            throw new RuntimeException("Cart is empty");
         }
-        Order order = null;
+
+        Address address = orderRequestDto.getAddress();
+           System.out.println(address);
+        if (address != null) {
+            address = addressRepository.save(address);
+            System.out.println(address);
+        } else {
+            throw new RuntimeException("Address cannot be null");
+        }
+
         double totalPrice = 0.0;
-        for (Cart cartitem : cart) {
-            Book book = cartitem.getBook();
-            long Quantity = cartitem.getQuantity();
-            if (Quantity < book.getQuantity()) {
-                throw new RuntimeException("Insufficient quantity in cart");
+        Order order = null;
+
+        for (Cart cartItem : cart) {
+            Book book = cartItem.getBook();
+            long quantity = cartItem.getQuantity();
+            System.out.println(quantity);
+            if (quantity > book.getQuantity()) {
+                throw new RuntimeException("Insufficient stock for book: " + book.getBookName());
             }
-            double itemPrice = book.getPrice() * cartitem.getQuantity();
+
+            double itemPrice = book.getPrice() * quantity;
             totalPrice += itemPrice;
-            order = createOrder(user, book, cartitem.getQuantity(), book.getPrice() * cartitem.getQuantity(), orderRequestDto.getAddress());
+
+            order = createOrder(user, book, quantity, itemPrice, address);
 
             orderRepository.save(order);
-            book.setQuantity(book.getQuantity() - cartitem.getQuantity());
+
+            book.setQuantity(book.getQuantity() - quantity);
             bookRepository.save(book);
-            cartRepository.delete(cartitem);
+
+            cartRepository.delete(cartItem);
         }
+
         return mapToDto(order);
     }
 
     @Override
     public OrderResponseDto placeOrderForSpecificItem(Long cartId,OrderRequestDto orderRequestDto) {
-        User user = userRepository.findById(orderRequestDto.getUserId())
+       /* User user = userRepository.findById(orderRequestDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Cart cart = cartRepository.findById(cartId)
@@ -94,8 +112,8 @@ public class OrderServiceImpl implements OrderService {
         book.setQuantity(book.getQuantity() - cart.getQuantity());
         bookRepository.save(book);
         cartRepository.delete(cart);
-        return mapToDto(order);
-
+        return mapToDto(order);*/
+     return null;
     }
 @Override
     public boolean cancelOrder(Long orderId) {
@@ -126,7 +144,7 @@ public class OrderServiceImpl implements OrderService {
         return orderResponseDto;
     }
 
-    private Order createOrder(User user, Book book, long quantity, double price, String address){
+    private Order createOrder(User user, Book book, long quantity, double price, Address address){
         Order order = new Order();
         order.setUser(user);
         order.setBook(book);
@@ -137,7 +155,12 @@ public class OrderServiceImpl implements OrderService {
         order.setAddress(address);
         return order;
     }
-
+    public Long getUserIdFromToken(String token) {
+        if (token == null || token.isEmpty()) {
+            throw new IllegalArgumentException("Token cannot be null or empty");
+        }
+        return jwtService.extractUserId(token);
+    }
 }
 
 

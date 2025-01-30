@@ -1,6 +1,7 @@
 package com.book_store_application.responsedto;
 
 import com.book_store_application.model.Image;
+import com.book_store_application.model.User;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -14,7 +15,6 @@ public class BookResponseDto {
     private Image image;
     private double price;
     private Long quantity;
-
 
     public BookResponseDto(Integer id, String bookName, String authorName, double price, String description, Long quantity, Image image) {
         this.id = id;

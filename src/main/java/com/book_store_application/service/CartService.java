@@ -7,7 +7,7 @@ import com.book_store_application.model.User;
 import java.util.List;
 
 public interface CartService {
-    Cart addToCart(long userId, Integer bookId);
+    Cart addToCart(long userId, Integer bookId,int requestQuantity);
     void removeFromCart(long cartId);
     void removeAllFromCartByUserId(long userId );
     Cart updateQuantity( long userId, long cartId, long quantity);

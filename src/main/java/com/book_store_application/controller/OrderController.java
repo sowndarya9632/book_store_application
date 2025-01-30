@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -19,8 +19,12 @@ public class OrderController {
     private OrderServiceImpl orderServiceimpl;
 
     @PostMapping("/place")
-    public ResponseEntity<OrderResponseDto> placeOrderForAllItems(@RequestBody OrderRequestDto orderRequestDto) {
-      OrderResponseDto  orderResponseDto  = orderServiceimpl.placeOrderForAllItems(orderRequestDto);
+    public ResponseEntity<OrderResponseDto> placeOrderForAllItems( @RequestHeader("Authorization") String authorizationHeader,@RequestBody OrderRequestDto orderRequestDto) {
+        String token = authorizationHeader.trim();
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7); // Remove the "Bearer " part
+        }
+      OrderResponseDto  orderResponseDto  = orderServiceimpl.placeOrderForAllItems( token,orderRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(orderResponseDto);
     }
 
